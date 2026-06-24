@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>College Assignment Submission Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px gray;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .dashboard {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 15px;
+            width: 28%;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 5px gray;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid gray;
+        }
+
+        th {
+            background: #007BFF;
+            color: white;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .submitted { color: green; font-weight: bold; }
+        .pending { color: orange; font-weight: bold; }
+        .late { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>College Assignment Submission Tracker</h1>
+
+    <input type="text" id="title" placeholder="Assignment Title">
+    
+    <select id="subject">
+        <option value="">Select Subject</option>
+        <option>DBMS</option>
+        <option>Java</option>
+        <option>Python</option>
+        <option>Web Technology</option>
+    </select>
+
+    <input type="date" id="dueDate">
+
+    <select id="status">
+        <option>Pending</option>
+        <option>Submitted</option>
+        <option>Late</option>
+    </select>
+
+    <button onclick="addAssignment()">Add Assignment</button>
+
+    <br><br>
+
+    <label>Filter by Subject:</label>
+    <select id="filter" onchange="filterAssignments()">
+        <option value="All">All</option>
+        <option>DBMS</option>
+        <option>Java</option>
+        <option>Python</option>
+        <option>Web Technology</option>
+    </select>
+
+    <div class="dashboard">
+        <div class="card">
+            <h3>Submitted</h3>
+            <h2 id="submittedCount">0</h2>
+        </div>
+
+        <div class="card">
+            <h3>Pending</h3>
+            <h2 id="pendingCount">0</h2>
+        </div>
+
+        <div class="card">
+            <h3>Late</h3>
+            <h2 id="lateCount">0</h2>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Subject</th>
+                <th>Due Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="assignmentTable"></tbody>
+    </table>
+</div>
+
+<script>
+    let assignments = [];
+
+    function addAssignment() {
+        let title = document.getElementById("title").value;
+        let subject = document.getElementById("subject").value;
+        let dueDate = document.getElementById("dueDate").value;
+        let status = document.getElementById("status").value;
+
+        if (title === "" || subject === "" || dueDate === "") {
+            alert("Please fill all fields");
+            return;
+        }
+
+        assignments.push({ title, subject, dueDate, status });
+
+        displayAssignments(assignments);
+        updateDashboard();
+
+        document.getElementById("title").value = "";
+        document.getElementById("subject").value = "";
+        document.getElementById("dueDate").value = "";
+    }
+
+    function displayAssignments(data) {
+        let table = document.getElementById("assignmentTable");
+        table.innerHTML = "";
+
+        data.forEach(item => {
+            table.innerHTML += `
+                <tr>
+                    <td>${item.title}</td>
+                    <td>${item.subject}</td>
+                    <td>${item.dueDate}</td>
+                    <td class="${item.status.toLowerCase()}">${item.status}</td>
+                </tr>
+            `;
+        });
+    }
+
+    function updateDashboard() {
+        document.getElementById("submittedCount").innerText =
+            assignments.filter(a => a.status === "Submitted").length;
+
+        document.getElementById("pendingCount").innerText =
+            assignments.filter(a => a.status === "Pending").length;
+
+        document.getElementById("lateCount").innerText =
+            assignments.filter(a => a.status === "Late").length;
+    }
+
+    function filterAssignments() {
+        let selected = document.getElementById("filter").value;
+
+        if (selected === "All") {
+            displayAssignments(assignments);
+        } else {
+            let filtered = assignments.filter(a => a.subject === selected);
+            displayAssignments(filtered);
+        }
+    }
+</script>
+
+</body>
+</html>
